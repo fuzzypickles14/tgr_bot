@@ -1,0 +1,26 @@
+{
+  "name": "tgr_bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "discord.js": "latest",
+    "opusscript": "0.0.1",
+    "ytdl-core-discord": "latest",
+    "colors": "latest",
+    "snoowrap": "latest",
+    "shuffle-array": "latest",
+    "jquery": "latest",
+    "ajax": "latest",
+    "request": "latest",
+    "async": "latest",
+    "asyncjs": "latest",
+    "globals": "latest"
+  }
+}
