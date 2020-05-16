@@ -1,26 +1,29 @@
 {
   "name": "tgr_bot",
   "version": "1.0.0",
-  "description": "",
+  "description": "This is a bot for TGR",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "scripts": {},
   "keywords": [],
-  "author": "",
+  "author": {
+    "name": "Andrew Toomey",
+    "email": "toomz54@gmail.com",
+    "url": ""
+  },
   "license": "Apache-2.0",
   "dependencies": {
-    "discord.js": "latest",
-    "opusscript": "0.0.1",
-    "ytdl-core-discord": "latest",
-    "colors": "latest",
-    "snoowrap": "latest",
-    "shuffle-array": "latest",
-    "jquery": "latest",
+    "@discordjs/opus": "^0.3.2",
     "ajax": "latest",
-    "request": "latest",
     "async": "latest",
     "asyncjs": "latest",
-    "globals": "latest"
+    "colors": "latest",
+    "discord.js": "latest",
+    "globals": "latest",
+    "jquery": "latest",
+    "request": "latest",
+    "shuffle-array": "latest",
+    "snoowrap": "latest",
+    "ytdl-core-discord": "latest",
+    "ytdl-core": "^2.1.2"
   }
 }
