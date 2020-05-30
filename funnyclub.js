@@ -9,10 +9,121 @@ module.exports = {
                 module.exports.printRank(msg);
             }
         } else if (args.length === 3) {
-
+            if (args[1].toUpperCase() === "NOM") {
+                module.exports.nom(msg);
+            } else if (args[1].toUpperCase() === "DENOM") {
+                module.exports.denom(msg);
+            }
         } else {
             msg.channel.send(`You didn't provide enough arguments ${msg.author}, that isn't very funny.`)
         }
+    },
+
+    isVoting: false,
+    voteResultMap: {},
+    voteTime: 30 * 1000,
+    numYes: 0,
+    numNo: 0,
+    registerVote: (msg) => {
+        if (msg.content.toUpperCase() === "YES" || msg.content.toUpperCase() === "NO") {
+            if (!(msg.author in module.exports.voteResultMap)) {
+                if (msg.content.toUpperCase() === "YES") {
+                    module.exports.numYes++;
+                    module.exports.voteResultMap[msg.author] = "YES";
+                    msg.channel.send(`${msg.author} voted with "YES".`);
+                } else if (msg.content.toUpperCase() === "NO") {
+                    module.exports.numNo++;
+                    module.exports.voteResultMap[msg.author] = "NO";
+                    msg.channel.send(`${msg.author} voted with "NO".`);
+                }
+            } else {
+                msg.channel.send(`${msg.author} you have already voted".`);
+            }
+        }
+    },
+
+
+    nom: (msg) => {
+        const nominee = msg.content.split(" ")[2];
+        msg.channel.send(`Nominating ${nominee} to move higher in the funny club. Vote with "yes" or "no".`);
+        module.exports.isVoting = true;
+        setTimeout(function () {
+            module.exports.handleVote(msg, 25);
+        }, module.exports.voteTime);
+
+    },
+
+    denom: (msg) => {
+        const nominee = msg.content.split(" ")[2];
+        msg.channel.send(`Nominating ${nominee} to move lover in the funny club. Vote with "yes" or "no".`);
+        module.exports.isVoting = true;
+        setTimeout(function () {
+            module.exports.handleVote(msg,-1 * 25);
+        }, module.exports.voteTime);
+    },
+
+    handleVote: (msg, karma) => {
+        console.log(module.exports.voteResultMap);
+        const nominee = msg.content.split(" ")[2];
+        const username = msg.mentions.users.first().username.toUpperCase();
+        module.exports.isVoting = false;
+        msg.channel.send(`Voting for ${nominee} has ended, calculating results.`);
+        if (module.exports.numNo === 0 && module.exports.numYes === 0) {
+            msg.channel.send(`Voting FAILED for ${nominee}, nobody voted.`);
+            module.exports.clearData();
+            return;
+        }
+
+        const totalVotes = module.exports.numNo + module.exports.numYes;
+        if (totalVotes <= 2) {
+            msg.channel.send(`Voting FAILED for ${nominee}, not enough people. At least 3 different votes must be cast.`);
+            module.exports.clearData();
+            return;
+        }
+
+        const rate = parseFloat((module.exports.numYes /  totalVotes).toFixed(3));
+        if (rate <= parseFloat((2/3).toFixed(5))) {
+            msg.channel.send(`Voting FAILED for ${nominee}!, the vote was YES: ${module.exports.numYes} to NO: ${module.exports.numNo}`);
+            module.exports.clearData();
+            return;
+        }
+
+        msg.channel.send(`Voting PASSED for ${nominee}!, the vote was YES: ${module.exports.numYes} to NO: ${module.exports.numNo}`);
+        fs.readFile("funnyclub.json", ((err, data) => {
+            if (err) {
+                console.log(err);
+            } else {
+                const json = JSON.parse(data);
+                let isInFunnyClub = false;
+                let points = 0;
+                for (let i = 0; i < json.users.length; i++) {
+                    if (json.users[i].username.toUpperCase() === username) {
+                        isInFunnyClub = true;
+                        json.users[i].points += karma;
+                        points = json.users[i].points;
+                    }
+                }
+                if (!isInFunnyClub) {
+                    points = 0 + karma
+                    json.users.push({username: username, points: points, karma: 20});
+                }
+
+                const jsonString  = JSON.stringify(json);
+                fs.writeFile("funnyclub.json", jsonString, (err) => {
+                    if (err) {
+                        console.log(err);
+                    }
+                });
+                msg.channel.send(`${nominee}!, Your rank is now "${module.exports.getRankFromPoints(points)}" with point value "${points}".`);
+            }
+        }));
+        module.exports.clearData();
+    },
+
+    clearData: () => {
+        module.exports.numYes = 0;
+        module.exports.numNo = 0;
+        module.exports.voteResultMap = {};
     },
 
     printRank: (msg) => {
@@ -25,7 +136,7 @@ module.exports = {
                 for (let i = 0; i < json.users.length; i++) {
                     if (json.users[i].username.toUpperCase() === msg.author.username.toUpperCase()) {
                         isInFunnyClub = true;
-                        msg.channel.send(`${msg.author}!, Your rank is "${module.exports.getRankFromPoints(json.users[i].points)}".`)
+                        msg.channel.send(`${msg.author}!, Your rank is "${module.exports.getRankFromPoints(json.users[i].points)}" with point value "${json.users[i].points}".`)
                     }
                 }
                 if (!isInFunnyClub) {
@@ -33,7 +144,9 @@ module.exports = {
                     json.users.push({username: msg.author.username, points: 0, karma: 20});
                     const jsonString  = JSON.stringify(json);
                     fs.writeFile("funnyclub.json", jsonString, (err) => {
-                        console.log(err);
+                        if (err) {
+                            console.log(err);
+                        }
                     });
                 }
             }
@@ -42,7 +155,7 @@ module.exports = {
 
     getRankFromPoints: (points) => {
         if (points <= -1000) {
-            return "Just plain disappointing"
+            return "........."
         } else if (points <= -900) {
             return "Ben Shapiro"
         } else if (points <= -800) {
