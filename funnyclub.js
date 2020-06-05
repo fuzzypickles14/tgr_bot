@@ -197,7 +197,12 @@ module.exports = {
         } else if (1000 <= points) {
             return "Pickle Rick, Funniest Shit Ever"
         }
-    }
-    ,
+    },
+
+    help: `===============================Funny Club================================
+$fc rank:     Prints your rank         
+$fc nom @MENTION: Nominates the mentioned user to go UP in the funny club
+$fc denom @MENTION: Nominates the mentioned user to go DOWN in the funny club
+=========================================================================\n`
 
 }
