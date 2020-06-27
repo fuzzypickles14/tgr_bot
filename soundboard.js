@@ -27,7 +27,7 @@ module.exports = {
     playSimp2: async (msg) => {
         if (msg.member.voice.channel) {
             const connection = await msg.member.voice.channel.join();
-            await module.exports.playAudioFile('simp.mp3', connection);
+            await module.exports.playAudioFile('simp2.mp3', connection);
         }
 
     },
