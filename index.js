@@ -24,10 +24,14 @@ bot.on('message', msg => {
     } else if (msg.content.startsWith(`${cfg.prefix}crazy`)) {
         soundboard.playCrazy(msg).then(r => console.log(r));
         found = true;
+    } else if (msg.content.startsWith(`${cfg.prefix}simp2`)) {
+        soundboard.playSimp2(msg).then(r => console.log(r));
+        found = true;
     } else if (msg.content.startsWith(`${cfg.prefix}simp`)) {
         soundboard.playSimp(msg).then(r => console.log(r));
         found = true;
-    } else if (msg.content.startsWith(`${cfg.prefix}help`)) {
+    }
+    else if (msg.content.startsWith(`${cfg.prefix}help`)) {
         let helpMessage = soundboard.help + funnyClub.help;
         msg.channel.send(helpMessage);
         found = true;
